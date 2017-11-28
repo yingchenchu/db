@@ -1,11 +1,9 @@
 <html>
-
    <head>
       <title>Create Advertisement</title>
    </head>
-  
    <body>
-      <form action = "/profile/showAd" method = "post">
+      <form action = "/profile/ReviewAd" method = "post">
          <input type = "hidden" name = "_token" value = "<?php echo csrf_token(); ?>">
          <table>
             <span style="font-weight:bold; font-size:150%;">Advertisement information</span>

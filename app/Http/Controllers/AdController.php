@@ -12,14 +12,14 @@ class AdController extends Controller
     public function CreateAd(Request $request)
     {
 
-        $ad_name = $request->input('name');
-        $category = $request->input('category');
-        $store_type = $request->input('store_type');
-        $product = $request->input('product');
-        $description = $request->input('description');
-        $saleby = $request->input('saleby');
-        $price = $request->input('price');
-        $post_date = new DateTime('now');
+        $ad_name        = $request->input('name');
+        $category       = $request->input('category');
+        $store_type     = $request->input('store_type');
+        $product        = $request->input('product');
+        $description    = $request->input('description');
+        $saleby         = $request->input('saleby');
+        $price          = $request->input('price');
+        $post_date      = new DateTime('now');
 
         $values = array(
             'user_id' => '3', 
@@ -35,8 +35,10 @@ class AdController extends Controller
             'expire_date' => $post_date);
 
         DB::table('ads')->insert($values);
-        
-        //return view('show_ad')->with('ad_id','user_id');
+
+        $ad = DB::table('ads')->orderBy('post_date', 'desc')->first();
+
+       return view('show_ad', ['ad' => $ad]);
     }
      public function showAllAds()
     {
@@ -50,6 +52,9 @@ class AdController extends Controller
             return view('showAds');
         }
         //return view('showAllAds', ['ads'->$ad]);
+    }
+    public function SearchedAds($search)
+    {
     }
 
     public function showAdInfo($id)

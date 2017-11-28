@@ -4,17 +4,17 @@
    	</head>
  	<body>
 		<span style="font-weight:bold; font-size:150%;">Available Advertisements</span>
-
+		<form action = "/AllAds/Search/product&category" method = "get">
  		<p>
 		   	<td>
-                  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
-                  <select name='category' id="category" required>
-                     <option value="None"     id="0">Please Choose a Category</option>
-                     <option value="Buy"      id="1">Buy</option>
-                     <option value="Sell"     id="1">Sell</option>
-                     <option value="Service"  id="2">Service</option>
-                     <option value="Rent"     id="3">Rent</option>
-                  </select>
+	              <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+	              <select name='category' id="category" required>
+	                 <option value="None"     		id="0">Please Choose a Category</option>
+	                 <option value="Buy"      		id="1">Buy</option>
+	                 <option value="Sell"     		id="1">Sell</option>
+	                 <option value="Service"  		id="2">Service</option>
+	                 <option value="Rent"     		id="3">Rent</option>
+	              </select>
            	</td>
            	<td>
               <select name="product" id="product">
@@ -38,6 +38,7 @@
            	</td>
 		    <button type="Search" name="Search" id="Search" value="Search"> Search </button>
        	</p>
+       	</form>
 	   	<?php
 	   	foreach($ads as $ad) {
 	   		?>

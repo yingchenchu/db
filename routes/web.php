@@ -25,12 +25,17 @@ Route::get('/', function () {
 Route::get('profile/createAd', function(){
     return view('create_ad');
 });
-Route::post('profile/showAd','AdController@CreateAd');
+Route::post('/profile/ReviewAd', 'AdController@CreateAd');
+
+
+Route::get('profile/myAds','AdController@myAds'); //History Ads
 
 Route::get('/AllAds','AdController@showAllAds');
+Route::get('/AllAds/Search','AdController@SearchedAds');
 //Route::post('ChosenAd','AdController@showAdInfo');
 
 Route::get('ChosenAd/{id}', 'AdController@showAdInfo');
+
 
 
 /*
