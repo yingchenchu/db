@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 use DB;
 use Illuminate\Http\Request;
+use Auth;
 
-class PhysicalStoreController extends Controller
+class PhysicalStoreController extends AuthController
 {
     /**
      * Display a listing of the resource.
@@ -34,23 +35,54 @@ class PhysicalStoreController extends Controller
      */
     public function store(Request $request)
     {
-        $store = $request->input('Store Name');
-        $manager = $request->input('Store Owner');
-        $sl = $request->input('Location');
+        $store = $request->input('Store_Name');
+        $manager = $request->input('Store_Owner');
+        $sl = $request->input('sl');
 
         $values = array('store_name'=>$store, 'store_manager'=>$manager,'sl'=>$sl);
         DB::table('physical_stores')->insertGetId($values); 
 
     }
-    public function rent(Request $request)
+
+    public function isWeekend($date) 
     {
-
-
-
-
-
+        return (date('N', strtotime($date)) >= 6);
     }
 
+
+    public function rent(Request $request)
+    {
+        $store_id = $request->input('item_id');
+        $date = $request->input('date');
+        $rent_hours = $request->input('renthour');
+
+        if (Auth::check())
+        {
+            echo "hello";            
+        }else
+        {
+            echo "no";
+        }
+
+        $weekend = $this->isWeekend($date);
+        $id = Auth::user()->id;
+        $price = 0;
+        $sl = DB::table('physical_stores')->where('store_id', $store_id)->first();
+        $v = array(1=>0.2,2=>0.15, 3=> 0.1, 4=> 0.5);
+
+        if ($weekend)
+        {
+            $price = (25 + 15*$v[$sl])  * $rent_hours;
+        }
+        else
+        {
+            $price = (15+ 10*$v[$sl]) * $rent_hours;
+        }
+
+        $values = array('user_id'=> $id,'store_id'=> $store_id, 'rent_hours'=>$rent_hours, 'rent_date'=>$date, 'amount'=>$price);
+
+        DB::table('stores_by_sellers'->insertGetId($values));
+    }
 
     /**
      * Display the specified resource.

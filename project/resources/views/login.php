@@ -7,7 +7,7 @@
    <p> Enter your information <p>
    
    <body>
-      <form action = "/main" method = "post">
+      <form action = "/m" method = "post">
       	    <input type = "hidden" name = "_token" value = "<?php echo csrf_token(); ?>">
 
          <table>
@@ -23,6 +23,7 @@
             <tr>
                <td colspan = '2'>
                   <input type = 'submit' value = "Login"/>
+                  <a href = "/register">Register</a>
                </td>
             </tr>
          </table>

@@ -2,12 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use View;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Http\Request;
 use DB;
 
 class AuthController extends Controller
 {
+    protected $currentUser;
+
     /**
      * Display a listing of the resource.
      *
@@ -24,6 +28,10 @@ class AuthController extends Controller
         //
     }
 
+    public function __construct(Guard $auth)
+    {
+        $this->currentUser = Auth::user();
+    }
     /**
      * Show the form for creating a new resource.
      *
@@ -53,19 +61,52 @@ class AuthController extends Controller
         return view('register_confirmation');
     }
 
+    public function addCity(Request $request){
+        $city = $request->input('city');
+
+
+        $values = array('city'=>$city);
+        DB::table('users')->where('id',Auth::user()->id)->update($values);
+
+        return redirect()->intended('/main');
+    }
+
+    public function addProvince(Request $request){
+        $province = $request->input('province');
+        //$city = $request->input('city');
+
+
+        
+
+        $values = array('province'=>$province);
+        DB::table('users')->where('id',Auth::user()->id)->update($values);
+
+        if($province == "Quebec"){
+            //return redirect()->intended('/quebec');
+            return view('quebec');
+        }else{
+            //return redirect()->intended('/ontario');
+            return view('ontario');
+        }
+    }
+
     public function authenticate(Request $request)
     {
         $username = $request->input('username');
         $password = $request->input('password');
 
-
         if (Auth::attempt(['username' => $username, 'password' => $password])) {
            
             echo "Password valid";
+            $user = Auth::user();
+            //Auth::login($user);
+            View::share('user', $user);
+            $this->currentUser = Auth::user();
+
             // Authentication passed...
             echo Auth::user();
             
-            //return redirect()->intended('/');
+            return redirect()->intended('/location');
         }else
         {
             echo "Invalid Password or username";
@@ -79,9 +120,11 @@ class AuthController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($username)
     {
-        //
+        $user = DB::table('users')->where('username',$username)->first();
+        return view('profile',['user'=> $user]);
+        //return View::make('users.show', compact('user'));
     }
 
     /**
