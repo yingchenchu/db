@@ -8,33 +8,24 @@ use date;
 use DB;
 class AdController extends Controller
 {
-
-    public function goToCreateAd(Request $request)
-    {
-        return view('create_ad');
-    }
-
-    /*public function select($name, $list = [], $selected = null, $options = [])
-    {!! Form::select('name', [null => 'Please Select'], null, ['required']) !!}*/
-
-
+    protected $table = "ads";
     public function CreateAd(Request $request)
     {
+        $user = DB::table('users')->where('user_name','=',$user_name)->get();
+        $user_id        = '3';//$user->'user_id';
+        $ad_name        = $request->input('name');
+        $category       = $request->input('category');
+        $store_type     = $request->input('store_type');
+        $product        = $request->input('product');
+        $description    = $request->input('description');
+        $saleby         = $request->input('saleby');
+        $price          = $request->input('price');
+        $post_date      = new DateTime('now');
+        $expire_date    = new DateTime('now'); //$user->'user_id'; //need to change based on the user's membership
 
-        $ad_name = $request->input('name');
-        $category = $request->input('category');
-        $store_type = $request->input('store_type');
-        $product = $request->input('product');
-        //$service = $request->input('service');
-        $description = $request->input('description');
-        $saleby = $request->input('saleby');
-        $price = $request->input('price');
-        $post_date = new DateTime('now');
 
-        // DB::insert('insert into payments values(?)',[$name]);
-        //'payment_id' => 2,
         $values = array(
-            'user_id' => '3', 
+            'user_id' => $user_id, 
             'ad_name'=> $ad_name,
             'category'=> $category,
             'product' => $product,
@@ -42,14 +33,77 @@ class AdController extends Controller
             'description' => $description,
             'saleby' => $saleby,
             'price' => $price,
-            'rank' => '0',    
+            'rank' => '0',
+            'expire_rank' => $expire_rank,
             'post_date' => $post_date,
-            'expire_date' => $post_date);
+            'expire_date' => $expire_date);
+
         DB::table('ads')->insert($values);
-        
-        return view('create_ad');
+
+        $ad = DB::table('ads')->orderBy('post_date', 'desc')->first();
+       return view('show_ad', ['ad' => $ad]);
+    }
+     public function showAllAds()
+    {
+        $ads = DB::table('ads')->orderBy('rank', 'desc')->get();
+        if( !is_null($ads))
+        {
+            return view('showAds', compact('ads'));
+        }
+        else
+        {
+            return view('showAds');
+        }
+    }
+    public function SearchedAds(Request $request)
+    {
+        $category   = $request->input('category');
+        $product    = $request->input('product');
+        $user_name  = $request->input('user_name');
+        if($category == 'None' && $product == 'None' && $user_name === NULL)
+        {
+            $ads = DB::table('ads')->get();
+            if( !is_null($ads))
+            {
+                return view('showAds', compact('ads'));
+            }
+            else
+            {
+                return view('showAds');
+            }
+        }
+        else
+        {
+            $ads = DB::table('ads')->where('category','=',$category)->where('product','=',$product)->get();
+            if( !is_null($ads))
+            {   if($user_name === NULL) //only category and product
+                {
+                    return view('showAds', compact('ads'));
+                }
+                else //category, product and user name
+                {
+                    $user_id = DB::table('users')->where('user_name','=',$user_name)->get('user_id');
+                    $ads_user = DB::table('ads')
+                                ->where('category','=',$category)
+                                ->where('product','=',$product)
+                                ->where('user_id', '=', $user_id)->get();
+                }
+            }
+            else
+            {
+                return view('showAds');
+            }
+        }   
     }
 
+    public function showAdInfo($id)
+    {
+        $ad = DB::table('ads')->where('ad_id', $id)->first();
+        return view('show_ad', ['ad' => $ad]); 
+    }
+    public function myads(){
+        $user_id = 
+    }
     /**
      * Display a listing of the resource.
      *

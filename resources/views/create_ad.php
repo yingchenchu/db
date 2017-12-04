@@ -1,18 +1,16 @@
 <html>
-
    <head>
       <title>Create Advertisement</title>
    </head>
-  
    <body>
-      <form action = "/AdCreation" method = "post">
+      <form action = "/profile/ReviewAd" method = "post">
          <input type = "hidden" name = "_token" value = "<?php echo csrf_token(); ?>">
          <table>
             <span style="font-weight:bold; font-size:150%;">Advertisement information</span>
              <tr>
                <td>Ad Name</td>
                <td>
-                <textarea name='name' id='name' style="width: 300px;" maxlength="50"></textarea>
+                <textarea name='name' id='name' style="width: 300px;" maxlength="50")" required="true"></textarea>
                </td>
             </tr>
 
@@ -20,8 +18,8 @@
                <td>Categories</td>
                <td>
                   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
-                  <select name='category' id="category">
-                     <option value="None"     id="0">Please Choose a Category</option>
+                  <select name='category' id="category" )" required="true">
+                     <option value=""         id="0">Please Choose a Category</option>
                      <option value="Buy"      id="1">Buy</option>
                      <option value="Sell"     id="1">Sell</option>
                      <option value="Service"  id="2">Service</option>
@@ -33,8 +31,8 @@
             <tr>
                <td>Product/Service</td>
                <td>
-                  <select name="product" id="product">
-                    <option value="0">Choose Product/Service</option>
+                  <select name="product" id="product" )" required="true">
+                    <option value=""                          >Choose Product/Service</option>
 
                     <option value="Clothing"            id="1">Clothing</option>
                     <option value="Books"               id="1">Books</option>
@@ -57,11 +55,11 @@
             <tr>
                <td>Store Type</td>
                <td>
-                  <select name='store_type' id='store_type'>
-                     <option value="None"          id="0">Please Choose Store Type</option>
+                  <select name='store_type' id='store_type' required="true">
+                     <option value=""              id="0">Please Choose Store Type</option>
                      <option value="Physical"      id="1">Physical</option>
                      <option value="Online"        id="2">Online</option>
-                     <option value="Both"          id="3">Physical and Online</option>
+                     <option value="Physical and Online"          id="3">Physical and Online</option>
                   </select>
                </td>
             </tr>
@@ -69,7 +67,7 @@
             <tr>
               <td>Description</td>
               <td>
-                <textarea name='description' id='description' style="width: 300px; height: 150px;" maxlength="500"></textarea>
+                <textarea name='description' id='description' value="" style="width: 300px; height: 150px;" maxlength="500" ) required="true"></textarea>
               </td>
             </tr>
 
@@ -85,7 +83,7 @@
 
             <tr>
                <td>Price</td>
-               <td><input type='number' name='price' id='price' /></td>
+               <td><input type='number' name='price' id='price' value="0"/></td>
             </tr>
 
             <tr>
@@ -95,7 +93,7 @@
                </td>
             </tr>
 
-            <script>
+          <script>
             $("#category").change(function() {
               if ($(this).data('options') === undefined)
               {
@@ -118,10 +116,9 @@
               var options = $(this).data('options').filter('[id=' + idNumb + ']');
               $('#product').html(options);
             });
+            $('#input-area textarea').fadeIn().html('').css("border","1px solid red");
          </script>
          </table>
-
-
       </form>
       
    </body>
