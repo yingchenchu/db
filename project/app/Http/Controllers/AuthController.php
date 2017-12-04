@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Http\Request;
 use DB;
+use Exception;
+
 
 class AuthController extends Controller
 {
@@ -51,14 +53,24 @@ class AuthController extends Controller
     public function store(Request $request)
     {
         $username = $request->input('username');
+        $check = $request->input('password');
+        $ncheck = $request->input('password-repeat');
         $password = password_hash($request->input('password'),PASSWORD_DEFAULT);
-        $npassword = password_hash($request->input('password'),PASSWORD_DEFAULT);
-        if ($password == $npassword){
+        if ($check == $ncheck){
         $values = array('username'=>$username, 'password'=>$password,'isadmin'=>0);
         //$values = array('username'=>$username, 'password'=>$password, 'iadmin'=>1,'province'=>'QC','city'=>'montreal','membership_plan'=>1,'pacakge'=>1);
-        DB::table('users')->insertGetId($values); //NEED TO ADD EXCPETION FOR DUPLICATE USERNAME >:-D
+        try
+        {
+            DB::table('users')->insertGetId($values); //NEED TO ADD EXCPETION FOR DUPLICATE USERNAME >:-D
+            return view('register_confirmation');
 
-        return view('register_confirmation');
+        }
+        catch (Exception $e)
+        {
+            echo "Username already taken ";
+            echo"<a href = '/register'>Go Back</a>";
+
+        }
     }else{
         view('register');
         echo "Passwords don't match ";
