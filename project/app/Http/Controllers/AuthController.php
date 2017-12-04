@@ -52,13 +52,18 @@ class AuthController extends Controller
     {
         $username = $request->input('username');
         $password = password_hash($request->input('password'),PASSWORD_DEFAULT);
-
-
+        $npassword = password_hash($request->input('password'),PASSWORD_DEFAULT);
+        if ($password == $npassword){
         $values = array('username'=>$username, 'password'=>$password,'isadmin'=>0);
         //$values = array('username'=>$username, 'password'=>$password, 'iadmin'=>1,'province'=>'QC','city'=>'montreal','membership_plan'=>1,'pacakge'=>1);
         DB::table('users')->insertGetId($values); //NEED TO ADD EXCPETION FOR DUPLICATE USERNAME >:-D
 
         return view('register_confirmation');
+    }else{
+        view('register');
+        echo "Passwords don't match ";
+        echo"<a href = '/register'>Go Back</a>";
+    }
     }
 
     public function addCity(Request $request){
@@ -98,10 +103,10 @@ class AuthController extends Controller
         if (Auth::attempt(['username' => $username, 'password' => $password])) {
            
             echo "Password valid";
-            $user = Auth::user();
+            //$user = Auth::user();
             //Auth::login($user);
-            View::share('user', $user);
-            $this->currentUser = Auth::user();
+           // View::share('user', $user);
+            //$this->currentUser = Auth::user();
 
             // Authentication passed...
             echo Auth::user();
@@ -109,7 +114,9 @@ class AuthController extends Controller
             return redirect()->intended('/location');
         }else
         {
-            echo "Invalid Password or username";
+            echo "Invalid Password or username ";
+            echo"<a href = '/login'>Go Back</a>";
+
         }
 
         

@@ -66,22 +66,26 @@ class PhysicalStoreController extends AuthController
 
         $weekend = $this->isWeekend($date);
         $id = Auth::user()->id;
+        echo $id;
         $price = 0;
-        $sl = DB::table('physical_stores')->where('store_id', $store_id)->first();
+        $sl = DB::table('physical_stores')->select('sl')->where('store_id', $store_id)->first();
+        $loc = (get_object_vars($sl));
+        echo $loc['sl'];
         $v = array(1=>0.2,2=>0.15, 3=> 0.1, 4=> 0.5);
 
         if ($weekend)
         {
-            $price = (25 + 15*$v[$sl])  * $rent_hours;
+            $price = (25 + 15*$v[$loc['sl']])  * $rent_hours;
         }
         else
         {
-            $price = (15+ 10*$v[$sl]) * $rent_hours;
+            $price = (15+ 10*$v[$loc['sl']]) * $rent_hours;
         }
 
         $values = array('user_id'=> $id,'store_id'=> $store_id, 'rent_hours'=>$rent_hours, 'rent_date'=>$date, 'amount'=>$price);
 
-        DB::table('stores_by_sellers'->insertGetId($values));
+        DB::table('stores_by_sellers')->insertGetId($values);
+        return redirect()->intended('/profile/' . Auth::user()->username);
     }
 
     /**

@@ -12,7 +12,7 @@
 	  		Choose the Date for renting
 	  		<input type="date" name = "date">
 	        <br />
-	        <input type="text"  name = "Rent hours" id="renthour" placeholder = "Rent hours" style = "width : 85px; margin-left:	 10px; margin-top: 1mm;"/>
+	        <input type="text"  name = "renthour" id="renthour" placeholder = "Rent hours" style = "width : 85px; margin-left:	 10px; margin-top: 1mm;"/>
 	        <br />
 		</div>
 		<input type = "submit" value="Rent">

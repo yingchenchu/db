@@ -4,6 +4,8 @@ use Illuminate\Http\Request;
 use DB;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Contracts\Auth\Guard;
 use DateTime;
 use date;
 class PaymentController extends Controller
@@ -24,7 +26,7 @@ class PaymentController extends Controller
         
         // DB::insert('insert into payments values(?)',[$name]);
         //'payment_id' => 2,
-        $values = array('user_id' => '3', 'amount'=> '1', 'card_details'=> $card_details, 'payment_date' => $date);
+        $values = array('user_id' => Auth::user()->id, 'amount'=> '1', 'card_details'=> $card_details, 'payment_date' => $date);
         DB::table('payment_management_system')->insert($values);
         
         return view('payment_confirmation');
@@ -39,6 +41,18 @@ class PaymentController extends Controller
     public function index()
     {
         //
+    }
+
+    public function backup()
+    {
+        $p = DB::table('payment_management_system')->get();
+            //echo json_encode($p);
+            foreach ($p as $record){
+                //echo json_encode($record);
+                DB::table('backup')->insert(get_object_vars($record));
+            }
+
+        return redirect()->intended('/paymentList');
     }
     /**
      * show the form for creating a new resource.

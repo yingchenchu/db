@@ -7,7 +7,7 @@
    <p> Enter your information <p>
    
    <body>
-      <form action = "/m" method = "post">
+      <form action = "/login" method = "post">
       	    <input type = "hidden" name = "_token" value = "<?php echo csrf_token(); ?>">
 
          <table>

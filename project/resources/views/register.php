@@ -10,7 +10,7 @@
    <!-- add checks depending on if it's from a physical store -->
    
    <body>
-      <form action = "/registerConfirmation" method = "post">
+      <form action = "/register" method = "post">
             <input type = "hidden" name = "_token" value = "<?php echo csrf_token(); ?>">
 
          <table>
