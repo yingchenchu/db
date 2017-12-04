@@ -7,6 +7,10 @@ use Illuminate\Http\Request;
 class MembershipPlanController extends Controller
 {
 
+    public function displayMemberships($id){
+        return view('membership', ['id' => $id]); //gives profile id
+    }
+
     /**
      * Display a listing of the resource.
      *

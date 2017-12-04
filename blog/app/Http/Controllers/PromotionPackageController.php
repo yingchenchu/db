@@ -7,6 +7,11 @@ use Illuminate\Http\Request;
 class PromotionPackageController extends Controller
 {
 
+
+
+    public function displayPromotionPackages($id){
+         return view('promotion_package', ['id' => $id]); //gives ad id
+    }
     /**
      * Display a listing of the resource.
      *
