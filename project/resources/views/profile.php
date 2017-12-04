@@ -4,6 +4,8 @@
    </head>
   
    <body>
+   		<form action = "/profile/{<?php echo $user->username ?>}/createAd" method="get">
+
  		<input type = "hidden" name = "_token" value = "<?php echo csrf_token(); ?>">
      		<table>
             	<span style="font-weight:bold; font-size:130%;">User Profile</span>
@@ -35,6 +37,10 @@
 		   			</p>
                	</tr>
         	</table>      
-       
+       			<button type="create" name="create" id="create">Create Ad </button>
+		</form>
+		<form action = "/profile/{<?php echo $user->username ?>}/MyAds" method="get">
+			<button type="view" name="view" id="view">View My Ads</button>
+		</form>
    </body>
 </html>

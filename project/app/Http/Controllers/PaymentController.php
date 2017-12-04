@@ -4,16 +4,49 @@ use Illuminate\Http\Request;
 use DB;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Contracts\Auth\Guard;
 use DateTime;
 use date;
+use App\Payment; //for the Model Payment
+
+
 class PaymentController extends Controller
 {
-     public function goToPaymentPage(){
-        return view('payment');
+
+     // public function __construct(){
+
+     //         $this->load->model('Payment'); //Load the Model here   
+
+     // }
+
+     public function goToPaymentPage(Request $request, $id){
+
+
+        $chosen_promo = $request->input('promotion_package');
+        $chosen_membership = $request->input('membership_plan');
+        
+        if($chosen_promo!= NULL){
+            $whichItemBuying = "Buying promotion package: ";
+            return view('payment', ['whichItemBuying' => $whichItemBuying, 'promo_or_membership' => $chosen_promo, 'id' => $id ]); //id of ad
+         }
+         else if ($chosen_membership!= NULL) {
+            $whichItemBuying = "Buying membership plan: ";
+            return view('payment', ['whichItemBuying' => $whichItemBuying, 'promo_or_membership' => $chosen_membership, 'id' => $id ]); //id of ad
+             
+         }
+            $whichItemBuying = "Buying item from ad: ";
+            $neither_is_an_ad = "";
+            return view('payment', ['whichItemBuying' => $whichItemBuying, 'promo_or_membership' => $neither_is_an_ad, 'id' => $id ]); //id of ad
+
+       
      }
-    public function savePayment(Request $request){
+     
+
+    public function getAdId($id) {
+        return $id;
+    }
+
+    //save payment for Ad
+    public function savePaymentAd(Request $request, $ad_id){
 //    $values = array('id' => 1,'name' => 'Dayle');
 //    DB::table('users')->insert($values);
       // $date = new DateTime('2000-01-01');      // $name = $request->input('1', 1, 12, 'stud_name', null);
@@ -21,26 +54,35 @@ class PaymentController extends Controller
         $card_nbr = $request->input('card_nbr');
         $card_expiry_date = $request->input('card_expiry_date');
         $card_cvv = $request->input('card_cvv');
-        $card_details = $card_type+$card_nbr+$card_expiry_date+$card_cvv;
+        $card_details = (string)$card_type.(string)$card_nbr.(string)$card_expiry_date.(string)$card_cvv;
+
         $date = new DateTime('now');
-        
+        // $date->format('Y-m-d H:i:s');
+
         // DB::insert('insert into payments values(?)',[$name]);
         //'payment_id' => 2,
-        $values = array('user_id' => Auth::user()->id, 'amount'=> '1', 'card_details'=> $card_details, 'payment_date' => $date);
-        DB::table('payment_management_system')->insert($values);
+
+        $logged_user_id = 1; //NEED TO CHANGE TO Auth::user()->username;
+
+        $ad =DB::table('ads')->where('ad_id', $ad_id)->first();
+        
+
+        $values = array('ad_id_of_payment' => $ad_id,
+                        'membership_id_of_payment' => null,
+                        'promotion_id_of_payment' => null,
+                        'user_id_of_payment' => $logged_user_id,
+                        'amount'=> $ad->price, 
+                        'card_details'=> $card_details, 
+                        'payment_date' => $date);
+        DB::table('payments')->insert($values);
+
+        // $payment_test = new Payment(1, 1,"balahabaalah my card details"); //user id, amount, card details
+        // $payment_test->save();
+
         
         return view('payment_confirmation');
         // echo "Payment Transaction Successfully Completed.<br/>";
         // echo '<a href = "/payment">Click Here</a> to go back.';
-    }
-    /**
-     * display a listing of the resource.
-     *
-     * @return \illuminate\http\response
-     */
-    public function index()
-    {
-        //
     }
 
     public function backup()
@@ -54,6 +96,104 @@ class PaymentController extends Controller
 
         return redirect()->intended('/paymentList');
     }
+    
+    public function savePaymentPromoPack(Request $request, $ad_id, $promo_name){
+//    $values = array('id' => 1,'name' => 'Dayle');
+//    DB::table('users')->insert($values);
+      // $date = new DateTime('2000-01-01');      // $name = $request->input('1', 1, 12, 'stud_name', null);
+        $card_type = $request->input('card_type');
+        $card_nbr = $request->input('card_nbr');
+        $card_expiry_date = $request->input('card_expiry_date');
+        $card_cvv = $request->input('card_cvv');
+        $card_details = (string)$card_type.(string)$card_nbr.(string)$card_expiry_date.(string)$card_cvv;
+
+        $date = new DateTime('now');
+        // $date->format('Y-m-d H:i:s');
+        $logged_user_id = 1; //NEED TO CHANGE TO Auth::user()->username;
+
+        // DB::insert('insert into payments values(?)',[$name]);
+        //'payment_id' => 2,
+        if($promo_name=="7 days"){
+                $promo_id = 1;
+        }
+        else if($promo_name=="30 days")
+                $promo_id = 2;
+
+        else{
+                $promo_id = 3;
+        }
+        $promo_pack_chosen = DB::table('promotion_packages')->where('promotion_id', $promo_id)->first();
+
+
+        $values = array('ad_id_of_payment' => $ad_id,
+                        'membership_id_of_payment' => null,
+                        'promotion_id_of_payment' => $promo_id,
+                        'user_id_of_payment' => $logged_user_id,
+                        'amount'=> $promo_pack_chosen->price, 
+                        'card_details'=> $card_details, 
+                        'payment_date' => $date);
+        DB::table('payments')->insert($values);
+        // DB::table('payments')->insert($values);
+
+        // $payment_test = new Payment(1, 1,"balahabaalah my card details"); //user id, amount, card details
+        // $payment_test->save();
+
+        
+        return view('payment_confirmation');
+        // echo "Payment Transaction Successfully Completed.<br/>";
+        // echo '<a href = "/payment">Click Here</a> to go back.';
+    }
+
+public function savePaymentMembership(Request $request, $user_id, $membership_name){
+//    $values = array('id' => 1,'name' => 'Dayle');
+//    DB::table('users')->insert($values);
+      // $date = new DateTime('2000-01-01');      // $name = $request->input('1', 1, 12, 'stud_name', null);
+        $card_type = $request->input('card_type');
+        $card_nbr = $request->input('card_nbr');
+        $card_expiry_date = $request->input('card_expiry_date');
+        $card_cvv = $request->input('card_cvv');
+        $card_details = (string)$card_type.(string)$card_nbr.(string)$card_expiry_date.(string)$card_cvv;
+
+        $date = new DateTime('now');
+        $logged_user_id = 1; //NEED TO CHANGE TO Auth::user()->username;
+
+        if($membership_name=="normal plan"){
+                $membership_id = 1;
+        }
+        else if($membership_name=="silver plan")
+                $membership_id = 2;
+
+        else{
+                $membership_id = 3;
+        }
+
+        $membership_plan_chosen = DB::table('membership_plans')->where('membership_id', $membership_id)->first();
+
+
+        $values = array('ad_id_of_payment' => null,
+                        'membership_id_of_payment' => $membership_id,
+                        'promotion_id_of_payment' => null,
+                        'user_id_of_payment' => $logged_user_id,
+                        'amount'=> $membership_plan_chosen->price, 
+                        'card_details'=> $card_details, 
+                        'payment_date' => $date);
+        DB::table('payments')->insert($values);
+
+        return view('payment_confirmation');
+        // echo "Payment Transaction Successfully Completed.<br/>";
+        // echo '<a href = "/payment">Click Here</a> to go back.';
+    }
+
+    /**
+     * display a listing of the resource.
+     *
+     * @return \illuminate\http\response
+     */
+    public function index()
+    {
+        //
+    }
+
     /**
      * show the form for creating a new resource.
      *
@@ -63,6 +203,7 @@ class PaymentController extends Controller
     {
         
     }
+
     /**
      * store a newly created resource in storage.
      *
@@ -73,6 +214,7 @@ class PaymentController extends Controller
     {
         //
     }
+
     /**
      * display the specified resource.
      *
@@ -83,6 +225,7 @@ class PaymentController extends Controller
     {
         //
     }
+
     /**
      * show the form for editing the specified resource.
      *
@@ -93,6 +236,7 @@ class PaymentController extends Controller
     {
         //
     }
+
     /**
      * update the specified resource in storage.
      *
@@ -104,6 +248,7 @@ class PaymentController extends Controller
     {
         //
     }
+
     /**
      * remove the specified resource from storage.
      *
