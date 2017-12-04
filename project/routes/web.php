@@ -18,26 +18,49 @@ Route::get('/login', function () {
     return view('login');
 });
 
+Route::get('/location', function(){
+	return view('location');
+})->middleware('auth');
+
+Route::get('/quebec', function(){
+	return view('quebec');
+})->middleware('auth');
+Route::get('/ontario', function(){
+	return view('ontario');
+})->middleware('auth');
+
+Route::get('main',function(){
+	return view('main');
+})->middleware('auth');
+
+Route::get('/profile/{username}', 'AuthController@show')->middleware('auth');
+
 
 
 Route::get('register','AuthController@register');
 Route::post('registerConfirmation','AuthController@store');
-route::post('main','AuthController@authenticate');
+route::post('m','AuthController@authenticate')->middleware('auth');
+route::post('province','AuthController@addProvince')->middleware('auth');
+route::post('city','AuthController@addCity')->middleware('auth');
 
-Route::get('payment','PaymentController@goToPaymentPage');
-Route::post('paymentConfirmation','PaymentController@savePayment');
+
+
+Route::get('payment','PaymentController@goToPaymentPage')->middleware('auth');
+Route::post('paymentConfirmation','PaymentController@savePayment')->middleware('auth');
 
 Route::get('paymentList', function () {
 
     $details = DB::table('payment_management_system')->get();
 
-    return view('payments_details', ['details' => $details]);
+    return view('payments_details', ['details' => $details])->middleware('auth');
 });
 
 Route::get('rentStore', function(){
 	$stores = DB::table('physical_stores')->get();
-	return view('rent_store',['stores'=> $stores]);
+	return view('rent_store',['stores'=> $stores])->middleware('auth');
 
 });
-Route::get('addStore','PhysicalStoreController@index');
-Route::post('saveStore', 'PhysicalStoreController@store');
+Route::post('rentStore','PhysicalStoreController@rent')->middleware('auth');
+Route::get('addStore','PhysicalStoreController@index')->middleware('auth');
+Route::post('saveStore', 'PhysicalStoreController@store')->middleware('auth');
+
