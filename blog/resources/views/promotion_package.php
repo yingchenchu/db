@@ -19,8 +19,8 @@
 
 
 
- <script>
-	document.cookie = "myJavascriptVar = 7 days" + 
+ <!-- <script>
+	document.cookie = "myJavascriptVar = 7 days"; 
 
 
 	function myFunction() {
@@ -30,22 +30,22 @@
 
 	}
 
-</script>
+</script> -->
 
 <?php 
 	if(isset( $_COOKIE['myJavascriptVar'])){
    		$phpVar =  $_COOKIE['myJavascriptVar'];
-		echo $phpVar;
+		// echo $phpVar;
 	}
 	else{
 		$phpVar = "7 days";
 	}
 
 ?>
+<!-- onchange="myFunction()" -->
 
 
-
-<form class ="search-form" id="search-form" form action="/ad_<?php echo $id ?>/promo_package/payment" onchange="myFunction()" onsubmit="setFormAction()" method="get">
+<form class ="search-form" id="search-form" form action="/ad_<?php echo $id ?>/promo_package/payment"  onsubmit="setFormAction()" method="get">
   <input type="radio" name="promotion_package" value="7 days"> 7 days promotion 10$ - Your ad's rank will be increased for 7 days <br>
   <input type="radio" name="promotion_package" value="30 days" checked="checked"> 30 days - 50$ - Your ad's rank will be increased for 7 days <br>
   <input type="radio" name="promotion_package" value="60 days" checked="checked"> 60 days - 90$ - Your ad's rank will be visible for 60 days <br><br>

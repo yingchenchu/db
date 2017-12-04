@@ -59,7 +59,6 @@
                      <option value="None"          id="0">Please Choose Store Type</option>
                      <option value="Physical"      id="1">Physical</option>
                      <option value="Online"        id="2">Online</option>
-                     <option value="Physical and Online"          id="3">Physical and Online</option>
                   </select>
                </td>
             </tr>

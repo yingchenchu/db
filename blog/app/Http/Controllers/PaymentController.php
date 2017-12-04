@@ -80,7 +80,7 @@ class PaymentController extends Controller
         // $payment_test->save();
 
         
-        return view('payment_confirmation');
+        return view('payment_confirmation',  ['type' => "ad"]);
         // echo "Payment Transaction Successfully Completed.<br/>";
         // echo '<a href = "/payment">Click Here</a> to go back.';
     }
@@ -113,6 +113,8 @@ class PaymentController extends Controller
         $promo_pack_chosen = DB::table('promotion_packages')->where('promotion_id', $promo_id)->first();
 
 
+
+
         $values = array('ad_id_of_payment' => $ad_id,
                         'membership_id_of_payment' => null,
                         'promotion_id_of_payment' => $promo_id,
@@ -121,13 +123,20 @@ class PaymentController extends Controller
                         'card_details'=> $card_details, 
                         'payment_date' => $date);
         DB::table('payments')->insert($values);
+
+        //Update the ad with the promotion package info
+        // $promo_pack_bought_nbr_days = DB::table('promotion_packages')->where('promotion_id', 'promo_id')->value('nbr_days');
+
+        // $rank_expiring_date = $date->modify("+" . promo_pack_bought_nbr_days . "1 week");
+
+        // DB::table('ads')
+        //     ->where('ad_id', $ad_id)
+        //     ->update(['rank' => $promo_id, 'rank_expiring_date' => $rank_expiring_date]);
+
         // DB::table('payments')->insert($values);
 
-        // $payment_test = new Payment(1, 1,"balahabaalah my card details"); //user id, amount, card details
-        // $payment_test->save();
-
         
-        return view('payment_confirmation');
+        return view('payment_confirmation',   ['type' => "promotion"]);
         // echo "Payment Transaction Successfully Completed.<br/>";
         // echo '<a href = "/payment">Click Here</a> to go back.';
     }
@@ -157,7 +166,6 @@ public function savePaymentMembership(Request $request, $user_id, $membership_na
 
         $membership_plan_chosen = DB::table('membership_plans')->where('membership_id', $membership_id)->first();
 
-
         $values = array('ad_id_of_payment' => null,
                         'membership_id_of_payment' => $membership_id,
                         'promotion_id_of_payment' => null,
@@ -167,7 +175,16 @@ public function savePaymentMembership(Request $request, $user_id, $membership_na
                         'payment_date' => $date);
         DB::table('payments')->insert($values);
 
-        return view('payment_confirmation');
+        // $membership_duration = DB::table('membership_plans')->where('membership_id', $membership_id)->value('duration');
+
+        // $membership_expiring_date = $date->modify("+" . promo_pack_bought_nbr_days . "1 week");
+
+        //update membership 
+        // DB::table('users')
+        //     ->where('id', $logged_user_id)
+        //     ->update(['membership_expiring_date' => $membership_duration);
+
+        return view('payment_confirmation',   ['type' => "membership"]);
         // echo "Payment Transaction Successfully Completed.<br/>";
         // echo '<a href = "/payment">Click Here</a> to go back.';
     }
