@@ -24,6 +24,9 @@ class CreateAdsTable extends Migration
             $table->string('saleby');
             $table->integer('price');
             $table->integer('rank');
+            $table->integer('rating');
+            $table->string('province');
+            $table->string('city');
             $table->date('expire_rank');
             $table->date('post_date');
             $table->date('expire_date');

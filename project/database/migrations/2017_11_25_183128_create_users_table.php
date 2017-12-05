@@ -20,7 +20,7 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->string('province')->nullable();
             $table->string('city')->nullable();
-            $table->integer('membership_plan')->nullable();
+            $table->integer('membership_plan_expiry')->nullable();
             $table->integer('package')->nullable();
         });
     }

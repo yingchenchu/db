@@ -38,10 +38,10 @@ class PhysicalStoreController extends AuthController
         $store = $request->input('Store_Name');
         $manager = $request->input('Store_Owner');
         $sl = $request->input('sl');
-
-        $values = array('store_name'=>$store, 'store_manager'=>$manager,'sl'=>$sl);
+        $id = Auth::user()->id;
+        $values = array('store_name'=>$store, 'store_manager'=>$manager,'manager_id'=> $id,'sl'=>$sl);
         DB::table('physical_stores')->insertGetId($values); 
-
+        return redirect()->intended('/main');
     }
 
     public function isWeekend($date) 
@@ -76,13 +76,15 @@ class PhysicalStoreController extends AuthController
         if ($weekend)
         {
             $price = (25 + 15*$v[$loc['sl']])  * $rent_hours;
+            $deliver = 10 * $rent_hours;
         }
         else
         {
             $price = (15+ 10*$v[$loc['sl']]) * $rent_hours;
+            $deliver = 5 * $rent_hours;
         }
 
-        $values = array('user_id'=> $id,'store_id'=> $store_id, 'rent_hours'=>$rent_hours, 'rent_date'=>$date, 'amount'=>$price);
+        $values = array('user_id'=> $id,'store_id'=> $store_id, 'rent_hours'=>$rent_hours, 'rent_date'=>$date,'delivery_cost'=>$deliver, 'amount'=>$price);
 
         DB::table('stores_by_sellers')->insertGetId($values);
         return redirect()->intended('/profile/' . Auth::user()->username);

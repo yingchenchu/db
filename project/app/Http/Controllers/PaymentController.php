@@ -6,12 +6,12 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use DateTime;
 use date;
+use Auth;
 use App\Payment; //for the Model Payment
 
 
 class PaymentController extends Controller
 {
-
      // public function __construct(){
 
      //         $this->load->model('Payment'); //Load the Model here   
@@ -62,7 +62,7 @@ class PaymentController extends Controller
         // DB::insert('insert into payments values(?)',[$name]);
         //'payment_id' => 2,
 
-        $logged_user_id = 1; //NEED TO CHANGE TO Auth::user()->username;
+        $logged_user_id = Auth::user()->id; //NEED TO CHANGE TO Auth::user()->username;
 
         $ad =DB::table('ads')->where('ad_id', $ad_id)->first();
         
@@ -79,24 +79,19 @@ class PaymentController extends Controller
         // $payment_test = new Payment(1, 1,"balahabaalah my card details"); //user id, amount, card details
         // $payment_test->save();
 
-        
-        return view('payment_confirmation');
+        return view('payment_confirmation',  ['type' => "ad", 'ad_id'=> $ad_id]);
+        return view('payment_confirmation',  ['type' => "ad"]);
         // echo "Payment Transaction Successfully Completed.<br/>";
         // echo '<a href = "/payment">Click Here</a> to go back.';
     }
 
-    public function backup()
-    {
-        $p = DB::table('payment_management_system')->get();
-            //echo json_encode($p);
-            foreach ($p as $record){
-                //echo json_encode($record);
-                DB::table('backup')->insert(get_object_vars($record));
-            }
-
-        return redirect()->intended('/paymentList');
+    public function submitRating(Request $request, $ad_id){
+        $given_rating = $request->input('rating');
+        // $ad_current_rating = DB::table('ads')->where('ad_id', $ad_id)->value('rating');
+        DB::table('ads')->where('ad_id', $ad_id)->insert(array('rating' => $given_rating));
+        return redirect()->intended('/main');
     }
-    
+
     public function savePaymentPromoPack(Request $request, $ad_id, $promo_name){
 //    $values = array('id' => 1,'name' => 'Dayle');
 //    DB::table('users')->insert($values);
@@ -109,7 +104,7 @@ class PaymentController extends Controller
 
         $date = new DateTime('now');
         // $date->format('Y-m-d H:i:s');
-        $logged_user_id = 1; //NEED TO CHANGE TO Auth::user()->username;
+        $logged_user_id = Auth::user()->id; //NEED TO CHANGE TO Auth::user()->username;
 
         // DB::insert('insert into payments values(?)',[$name]);
         //'payment_id' => 2,
@@ -125,6 +120,8 @@ class PaymentController extends Controller
         $promo_pack_chosen = DB::table('promotion_packages')->where('promotion_id', $promo_id)->first();
 
 
+
+
         $values = array('ad_id_of_payment' => $ad_id,
                         'membership_id_of_payment' => null,
                         'promotion_id_of_payment' => $promo_id,
@@ -133,13 +130,20 @@ class PaymentController extends Controller
                         'card_details'=> $card_details, 
                         'payment_date' => $date);
         DB::table('payments')->insert($values);
-        // DB::table('payments')->insert($values);
 
-        // $payment_test = new Payment(1, 1,"balahabaalah my card details"); //user id, amount, card details
-        // $payment_test->save();
+        //Update the ad with the promotion package info
+        $promo_pack_bought_nbr_days = DB::table('promotion_packages')->where('promotion_id', 'promo_id')->value('nbr_days');
+
+        $rank_expiring_date = $date->modify("+" . (string)$promo_pack_bought_nbr_days . "7 days");
+
+        DB::table('ads')
+            ->where('ad_id', $ad_id)
+            ->update(['rank' => $promo_id, 'expire_rank' => $rank_expiring_date]);
+
+        DB::table('payments')->insert($values);
 
         
-        return view('payment_confirmation');
+        return view('payment_confirmation',   ['type' => "promotion"]);
         // echo "Payment Transaction Successfully Completed.<br/>";
         // echo '<a href = "/payment">Click Here</a> to go back.';
     }
@@ -169,7 +173,6 @@ public function savePaymentMembership(Request $request, $user_id, $membership_na
 
         $membership_plan_chosen = DB::table('membership_plans')->where('membership_id', $membership_id)->first();
 
-
         $values = array('ad_id_of_payment' => null,
                         'membership_id_of_payment' => $membership_id,
                         'promotion_id_of_payment' => null,
@@ -179,11 +182,31 @@ public function savePaymentMembership(Request $request, $user_id, $membership_na
                         'payment_date' => $date);
         DB::table('payments')->insert($values);
 
-        return view('payment_confirmation');
+         $membership_duration = DB::table('membership_plans')->where('membership_id', $membership_id)->value('duration');
+
+         $membership_expiring_date = $date->modify("+" . (string)$membership_duration . " 7days");
+
+        //update membership 
+         DB::table('users')
+             ->where('id', $logged_user_id)
+             ->update(['membership_plan_expiry' => $membership_duration]);
+
+        return view('payment_confirmation',   ['type' => "membership"]);
         // echo "Payment Transaction Successfully Completed.<br/>";
         // echo '<a href = "/payment">Click Here</a> to go back.';
     }
+    
+    public function backup()
+    {
+        $p = DB::table('payments')->get();
+            //echo json_encode($p);
+            foreach ($p as $record){
+                //echo json_encode($record);
+                DB::table('backup')->insert(get_object_vars($record));
+            }
 
+        return redirect()->intended('/paymentList');
+    }
     /**
      * display a listing of the resource.
      *

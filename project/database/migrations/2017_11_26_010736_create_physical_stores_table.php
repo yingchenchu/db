@@ -16,6 +16,8 @@ class CreatePhysicalStoresTable extends Migration
         Schema::create('physical_stores', function (Blueprint $table) {
             $table->integer('store_id')->autoIncrement();
             $table->string('store_name');
+            $table->integer('manager_id');
+            $table->foreign('manager_id')->references('id')->on('users');
             $table->string('store_manager');
             $table->integer('sl');
         });

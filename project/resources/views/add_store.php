@@ -15,15 +15,15 @@
          <table>
             <tr>
                <td>Store Name</td>
-               <td><input type='text' name='Store Name' /></td>
+               <td><input type='text' name='Store Name' required></td>
             </tr>
             <tr>
                <td>Store Owner</td>
-               <td><input type='text' name='Store Owner' /></td>
+               <td><input type='text' name='Store Owner' required></td>
             </tr>
             <tr>
                <td>Store Location</td>
-               <td><input type='text' name='sl' /></td>
+               <td><input type='text' name='sl' required></td>
             </tr>
             <tr>
                <td colspan = '2'>

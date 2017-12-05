@@ -21,6 +21,7 @@ class CreateStoresBySellersTable extends Migration
             $table->foreign('store_id')->references('store_id')->on('physical_stores');
             $table->integer('rent_hours');
             $table->date('rent_date');
+            $table->integer('delivery_cost');
             $table->integer('amount');
         });
     }

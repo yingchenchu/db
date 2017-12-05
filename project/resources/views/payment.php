@@ -48,31 +48,84 @@
             </p>";
          }
        }
-   ?>  
 
-   <!-- add checks depending on if it's from a physical store -->
-  <!--  <p> Total price: <p> -->
-   <?php
-
-   $current_user_id = 1;
-   //Auth::user()->username;
+   $current_user_id = Auth::user()->id;
 
    if($whichItemBuying=="Buying promotion package: "){
-            $paymentConfirmationRoute = "/ad_" . $ad->ad_id . "/promo_" . $promo_or_membership . "/paymentConfirmation";
+      $paymentConfirmationRoute = "/ad_" . $ad->ad_id . "/promo_" . $promo_or_membership . "/paymentConfirmation";
+
+        if($promo_or_membership=="7 days"){
+                $promo_id = 1;
+        }
+        else if($promo_or_membership=="30 days")
+                $promo_id = 2;
+
+        else{
+                $promo_id = 3;
+        }
+
+        $total = DB::table('promotion_packages')->where('promotion_id', $promo_id)->value('price');
 
    }
    else if($whichItemBuying=="Buying membership plan: "){
       $paymentConfirmationRoute = "/user_" . $current_user_id . "/membership_" . $promo_or_membership ."/paymentConfirmation";
 
+       $total = DB::table('membership_plans')->where('plan_type', $promo_or_membership)->value('price');
    }
    else{ //if neither of promo package or membership, must be buying an item from an add
             // $whichItemBuying = "Buying item from ad: ";
-      $paymentConfirmationRoute = "/ad_" . $ad->ad_id . "/paymentConfirmation";
+       $paymentConfirmationRoute = "/ad_" . $ad->ad_id . "/paymentConfirmation";
+       
+       $total = $ad->price;
 
+   }
+
+// In addition to this, all the buyers in the store can make payments with credit/debit cards
+// which cost 1% of the total transaction for debit payments, and 3% of the total transaction
+// for credit payments
+
+   if(isset( $_COOKIE['myJavascriptVar'])){
+         $new_total =  $_COOKIE['myJavascriptVar'];
+      // echo $phpVar;
+   }
+   else{
+      $new_total = $total;
    }
 
    ?>
 
+<!--    <p><b>  Total: <?php echo $total ?>$ <b><p>
+ -->
+<p id="final_total"><b><font size="6"> Total: <?php echo $total ?>$ <b></p>
+
+<script>
+function cardType() {
+  if("<?php echo $whichItemBuying ?>" == "Buying item from ad: "){
+      
+      <?php $ad =DB::table('ads')->where('ad_id', $id)->first() ?>
+        if("<?php echo $ad->store_type ?>" == "Physical"){
+
+
+         var cardTypeChosen = document.getElementById("card_type").value;
+         if (cardTypeChosen=="visa"){
+            var x = "<?php echo $total ?>";
+            var new_total = x*1.03; 
+         }
+         else if (cardTypeChosen=="debit"){
+            var x = "<?php echo $total ?>";
+            var new_total = x*1.01; 
+
+         }
+         else{
+            var new_total =  "<?php echo $total ?>"; 
+
+         }
+           document.getElementById("final_total").innerHTML = "Total: " + new_total +"$";
+           document.cookie = "myJavascriptVar = " + new_total
+        }
+      }
+}
+</script>
 
    <body>
       <form action = "<?php echo $paymentConfirmationRoute ?>" method = "post">
@@ -82,9 +135,9 @@
              <tr>
                <td>Card Type</td>
                <td>
-                  <select name='card_type' onchange="selectedCategory()">
+                  <select name='card_type' id="card_type" onchange="cardType()">
                      <option value="">Please choose a card type</option>
-                     <option value="visa">Visa</option>
+                     <option value="visa">Credit</option>
                      <option value="debit">Debit</option>
                   </select>
                </td>
@@ -109,6 +162,8 @@
          </table>
       
       </form>
+
+
    
    </body>
 </html>

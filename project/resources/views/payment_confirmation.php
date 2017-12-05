@@ -1,15 +1,20 @@
 <h> Payment Transaction Successfully Completed <br></h>
 
-<p> Please select a rating for the purchase <p>
+<?php 
+	if ($type == "ad"){ ?>
 
-<form action="/submitRating" method="post">
-  <input type="radio" name="rating" value="1"> 1 star 
-  <input type="radio" name="rating" value="2"> 2 star
-  <input type="radio" name="rating" value="3"> 3 star
-  <input type="radio" name="rating" value="3"> 4 star
-  <input type="radio" name="rating" value="3"> 5 star <br><br>
+	<p> Please select a rating for the purchase <p>
 
-  <input type="submit" value="Submit rating">
-</form>
+	<form action="/ad_<?php echo $ad_id ?>/submitRating" method="get">
+	  <input type="radio" name="rating" value="1"> 1 star 
+	  <input type="radio" name="rating" value="2"> 2 star
+	  <input type="radio" name="rating" value="3"> 3 star
+	  <input type="radio" name="rating" value="3"> 4 star
+	  <input type="radio" name="rating" value="3"> 5 star <br><br>
 
-<a href = "/payment">Click Here</a> to go back
+	  <input type="submit" value="Submit rating">
+	</form>
+
+<?php } ?>
+
+<a href = "/main">Click Here</a> to go back

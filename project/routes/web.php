@@ -18,16 +18,20 @@ Route::get('/', function () {
 
 Route::get('/profile/{username}/createAd', function(){
     return view('create_ad');
-})->middleware('auth');
-Route::post('/profile/ReviewAd', 'AdController@CreateAd')->middleware('auth');
+});
+Route::post('/profile/ReviewAd', 'AdController@CreateAd');
 
 
-Route::get('/profile/{username}/MyAds','AdController@myads')->middleware('auth'); //History Ads
+Route::get('/profile/{username}/MyAds','AdController@myads'); //History Ads
 
-Route::get('/AllAds','AdController@showAllAds')->middleware('auth');
-Route::get('/AllAds/Search','AdController@SearchedAds')->middleware('auth');
+Route::get('/AllAds','AdController@showAllAds');
+Route::get('/AllAds/Search','AdController@SearchedAds');
 
-Route::get('ChosenAd/{id}', 'AdController@showAdInfo')->middleware('auth');
+Route::get('ChosenAd/{id}', 'AdController@showAdInfo');
+Route::get('Edit/{id}', 'AdController@EditAd');
+Route::get('/SaveChange/{id}', 'AdController@SaveChanges');
+
+Route::get('Delete/{id}', 'AdController@DeleteAd');
 
 
 /************************YC***********************************/
@@ -36,7 +40,7 @@ Route::get('ad_{id}/promo_package_{promo_id}/payment','PaymentController@goToPay
 
 Route::get('ad_{id}/payment','PaymentController@goToPaymentPage')->middleware('auth');
 
-
+Route::post('/ad_{ad_id}/submitRating', 'PaymentController@submitRating');
 //for the payment system
 //for ad 
 Route::post('ad_{ad_id}/paymentConfirmation','PaymentController@savePaymentAd')->middleware('auth');
@@ -44,6 +48,9 @@ Route::post('ad_{ad_id}/paymentConfirmation','PaymentController@savePaymentAd')-
 Route::post('ad_{ad_id}/promo_{promo_name}/paymentConfirmation','PaymentController@savePaymentPromoPack')->middleware('auth');
 //for membership plan for a user
 Route::post('user_{user_id}/membership_{membership_name}/paymentConfirmation','PaymentController@savePaymentMembership')->middleware('auth');
+
+Route::get('profile_{user_id}/membership', 'MembershipPlanController@displayMemberships')->middleware('auth');
+Route::get('profile_{user_id}/membership/payment','PaymentController@goToPaymentPage')->middleware('auth');
 
 /*******************ALEX************************/
 
@@ -80,7 +87,7 @@ route::post('province','AuthController@addProvince')->middleware('auth');
 route::post('city','AuthController@addCity')->middleware('auth');
 
 Route::get('paymentList', function () {
-	if (Auth::user()->isAdmin){
+	if (Auth::user()->isadmin){
     $details = DB::table('payments')->get();
 
     return view('payments_details', ['details' => $details]);
@@ -91,6 +98,10 @@ Route::get('paymentList', function () {
 })->middleware('auth');
 
 Route::post('paymentList', 'PaymentController@backup')->middleware('auth');
+
+Route::get('/main/reports',function(){
+	return view('reports');
+})->middleware('auth');
 
 
 Route::get('rentStore', function(){

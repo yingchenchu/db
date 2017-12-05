@@ -4,7 +4,7 @@
    </head>
   
    <body>
-   		<form action = "/profile/{<?php echo $user->username ?>}/createAd" method="get">
+   		<form action = "/profile/<?php echo $user->username ?>/createAd" method="get">
 
  		<input type = "hidden" name = "_token" value = "<?php echo csrf_token(); ?>">
      		<table>
@@ -27,7 +27,7 @@
 		   						</p>
 		   						<p>
 		   							<span style='font-weight:bold;'>Membership Plan </span>
-		   							<span>$user->membership_plan</span>
+		   							<span>$user->membership_plan_expiry</span>
 		   						</p>
 		   						<p>
 		   							<span style='font-weight:bold;'>Promotion Package</span>
@@ -39,8 +39,11 @@
         	</table>      
        			<button type="create" name="create" id="create">Create Ad </button>
 		</form>
-		<form action = "/profile/{<?php echo $user->username ?>}/MyAds" method="get">
+		<form action = "/profile/<?php echo $user->username ?>/MyAds" method="get">
 			<button type="view" name="view" id="view">View My Ads</button>
+		</form>
+		<form action = "/profile_<?php echo $user->id ?>/membership" method="get">
+			<button type="view" name="view" id="view">Buy a membership</button>
 		</form>
    </body>
 </html>

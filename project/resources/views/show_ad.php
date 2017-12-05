@@ -4,6 +4,7 @@
    </head>
   
    <body>
+   	<form action = "/profile/<?php echo Auth::user()->username ?>/MyAds" method="get">
  		<input type = "hidden" name = "_token" value = "<?php echo csrf_token(); ?>">
      		<table>
             	<span style="font-weight:bold; font-size:130%;">Advertisement Information</span>
@@ -61,24 +62,23 @@
 		   						<p>
 		   							<span style='font-weight:bold;'>Address: </span>
 		   							<span>$ad->address</span>
-
+		   						</p>
+		   						<p>
+		   							<span style='font-weight:bold;'>Province: </span>
+		   							<span>$ad->province</span>
+		   						</p>
+		   						<p>
+		   							<span style='font-weight:bold;'>City: </span>
+		   							<span>$ad->city</span>
 		   						</p>";
-		   				?>
+		   				?>	
                		</p>
                	</tr>
 
             <tr>
         	</table>      
         </input>
-
-        <form action="/ad_<?php echo $ad->ad_id ?>/payment" method = "get">
-   			 <input type="submit" value="Buy the item " />
-		</form>
-
-        <form action="/ad_<?php echo $ad->ad_id ?>/promotion_package" method = "get">
-   			 <input type="submit" value="Buy a promotion package to increase the rank of your ad" />
-		</form>
-
-
+        <button name="myads" id="myads">My Ads</button>
+    </form>
    </body>
 </html>
